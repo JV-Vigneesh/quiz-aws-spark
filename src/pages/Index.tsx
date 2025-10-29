@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const API_BASE = ""; // Example: https://abcd1234.execute-api.ap-south-1.amazonaws.com/prod
 const API_KEY = ""; // Paste your actual key here
@@ -27,7 +28,15 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState<number | null>(null);
   const [message, setMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
   const { toast } = useToast();
+
+  const questionsPerPage = 1;
+  const totalPages = Math.ceil(questions.length / questionsPerPage);
+  const currentQuestions = questions.slice(
+    currentPage * questionsPerPage,
+    (currentPage + 1) * questionsPerPage
+  );
 
   const loadQuestions = async () => {
     if (!userName.trim()) {
@@ -65,6 +74,7 @@ const Index = () => {
       }
 
       setQuestions(fetchedQuestions);
+      setCurrentPage(0);
       setState("quiz");
     } catch (err) {
       console.error("Error loading questions:", err);
@@ -118,12 +128,14 @@ const Index = () => {
     setAnswers({});
     setScore(null);
     setMessage("");
+    setCurrentPage(0);
   };
 
   if (state === "welcome") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-secondary/30">
-        <Card className="w-full max-w-md p-8 shadow-[var(--shadow-elevated)] border-border/50">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-secondary/30 relative">
+        <ThemeToggle />
+        <Card className="w-full max-w-md p-8 shadow-[var(--shadow-elevated)] border-border/50 relative z-10">
           <div className="text-center mb-8">
             <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
               <svg
@@ -186,8 +198,9 @@ const Index = () => {
     const progress = (answeredCount / questions.length) * 100;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/30 p-4 py-8">
-        <div className="max-w-3xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/30 p-4 py-8 relative">
+        <ThemeToggle />
+        <div className="max-w-3xl mx-auto relative z-10">
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-bold text-foreground mb-2">Quiz in Progress</h2>
             <p className="text-muted-foreground mb-4">
@@ -205,46 +218,78 @@ const Index = () => {
           </div>
 
           <div className="space-y-6">
-            {questions.map((q, index) => (
-              <Card
-                key={q.question_id}
-                className="p-6 shadow-[var(--shadow-card)] border-border/50 transition-all duration-300 hover:shadow-[var(--shadow-elevated)]"
-              >
-                <h3 className="text-lg font-semibold text-foreground mb-4">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary mr-3">
-                    {index + 1}
-                  </span>
-                  {q.question_text}
-                </h3>
-
-                <RadioGroup
-                  value={answers[q.question_id] || ""}
-                  onValueChange={(value) =>
-                    setAnswers((prev) => ({ ...prev, [q.question_id]: value }))
-                  }
-                  className="space-y-3"
+            {currentQuestions.map((q, idx) => {
+              const globalIndex = currentPage * questionsPerPage + idx;
+              return (
+                <Card
+                  key={q.question_id}
+                  className="p-6 shadow-[var(--shadow-card)] border-border/50 transition-all duration-300 hover:shadow-[var(--shadow-elevated)]"
                 >
-                  {q.options.map((option, optIndex) => (
-                    <div
-                      key={optIndex}
-                      className={`flex items-center space-x-3 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer hover:border-primary/50 hover:bg-primary/5 ${
-                        answers[q.question_id] === option
-                          ? "border-primary bg-primary/10"
-                          : "border-border"
-                      }`}
-                    >
-                      <RadioGroupItem value={option} id={`q${q.question_id}-opt${optIndex}`} />
-                      <Label
-                        htmlFor={`q${q.question_id}-opt${optIndex}`}
-                        className="flex-1 cursor-pointer font-medium"
+                  <h3 className="text-lg font-semibold text-foreground mb-4">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary mr-3">
+                      {globalIndex + 1}
+                    </span>
+                    {q.question_text}
+                  </h3>
+
+                  <RadioGroup
+                    value={answers[q.question_id] || ""}
+                    onValueChange={(value) =>
+                      setAnswers((prev) => ({ ...prev, [q.question_id]: value }))
+                    }
+                    className="space-y-3"
+                  >
+                    {q.options.map((option, optIndex) => (
+                      <div
+                        key={optIndex}
+                        onClick={() =>
+                          setAnswers((prev) => ({ ...prev, [q.question_id]: option }))
+                        }
+                        className={`flex items-center space-x-3 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer hover:border-primary/50 hover:bg-primary/5 ${
+                          answers[q.question_id] === option
+                            ? "border-primary bg-primary/10"
+                            : "border-border"
+                        }`}
                       >
-                        {option}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </Card>
-            ))}
+                        <RadioGroupItem value={option} id={`q${q.question_id}-opt${optIndex}`} />
+                        <Label
+                          htmlFor={`q${q.question_id}-opt${optIndex}`}
+                          className="flex-1 cursor-pointer font-medium"
+                        >
+                          {option}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </Card>
+              );
+            })}
+          </div>
+
+          <div className="mt-8 flex gap-4 items-center justify-between">
+            <Button
+              onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+              disabled={currentPage === 0}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage + 1} of {totalPages}
+            </span>
+
+            <Button
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+              disabled={currentPage === totalPages - 1}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
 
           <div className="mt-8 sticky bottom-4">
@@ -278,8 +323,9 @@ const Index = () => {
     const passed = percentage >= 50;
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-secondary/30">
-        <Card className="w-full max-w-lg p-8 shadow-[var(--shadow-elevated)] border-border/50 text-center">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-secondary/30 relative">
+        <ThemeToggle />
+        <Card className="w-full max-w-lg p-8 shadow-[var(--shadow-elevated)] border-border/50 text-center relative z-10">
           <div className="mb-6">
             {passed ? (
               <CheckCircle2 className="w-24 h-24 mx-auto text-green-500 mb-4" />
