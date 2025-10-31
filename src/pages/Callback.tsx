@@ -7,10 +7,17 @@ const Callback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!auth.isLoading && auth.isAuthenticated) {
-      navigate("/");
+    if (!auth.isLoading && auth.isAuthenticated && auth.user) {
+      // Check user groups to determine role
+      const groups = (auth.user.profile["cognito:groups"] as string[]) || [];
+      
+      if (groups.includes("Admins")) {
+        navigate("/admin");
+      } else {
+        navigate("/user");
+      }
     }
-  }, [auth.isLoading, auth.isAuthenticated, navigate]);
+  }, [auth.isLoading, auth.isAuthenticated, auth.user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/30">
