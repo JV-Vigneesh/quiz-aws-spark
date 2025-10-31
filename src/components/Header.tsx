@@ -1,9 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "react-oidc-context";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
+import { LogOut, User } from "lucide-react";
 
 export const Header = () => {
   const location = useLocation();
+  const auth = useAuth();
   
   const isActive = (path: string) => location.pathname === path;
   
@@ -58,7 +61,33 @@ export const Header = () => {
           </nav>
         </div>
         
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          {auth.isAuthenticated ? (
+            <>
+              <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-secondary/50 rounded-full">
+                <User className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium">{auth.user?.profile.email}</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => auth.removeUser()}
+                className="text-muted-foreground hover:text-destructive"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <Link to="/login">
+              <Button variant="default" size="sm">
+                <User className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
+            </Link>
+          )}
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

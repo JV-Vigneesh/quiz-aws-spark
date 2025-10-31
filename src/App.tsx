@@ -7,6 +7,8 @@ import { ThemeProvider } from "next-themes";
 import Home from "./pages/Home";
 import Quiz from "./pages/Quiz";
 import About from "./pages/About";
+import Login from "./pages/Login";
+import Callback from "./pages/Callback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/callback" element={<Callback />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
