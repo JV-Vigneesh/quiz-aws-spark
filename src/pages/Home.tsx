@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -21,14 +19,6 @@ const Home = () => {
               Challenge yourself with our interactive quizzes and track your progress
               as you master new topics.
             </p>
-            <Link to="/quiz">
-              <Button
-                size="lg"
-                className="h-14 px-8 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl animate-fade-in"
-              >
-                Start Quiz Now
-              </Button>
-            </Link>
           </div>
         </section>
 
@@ -77,25 +67,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="container px-4 py-16 mb-16">
-          <Card className="max-w-3xl mx-auto p-8 md:p-12 shadow-[var(--shadow-elevated)] border-border/50 text-center bg-gradient-to-br from-primary/10 to-accent/10">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Ready to Get Started?
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Join now and start your learning journey today!
-            </p>
-            <Link to="/quiz">
-              <Button
-                size="lg"
-                className="h-12 px-6 text-base font-semibold bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all duration-300"
-              >
-                Take Your First Quiz
-              </Button>
-            </Link>
-          </Card>
-        </section>
       </main>
       
       <Footer />
