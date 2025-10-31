@@ -1,5 +1,5 @@
 // AWS API Gateway endpoints
-const API_BASE_URL = "https://1wbzcinbp1.execute-api.ap-south-1.amazonaws.com/prod";
+const API_BASE_URL = "";
 
 // Helper to get auth headers
 export const getAuthHeaders = (idToken: string) => ({
