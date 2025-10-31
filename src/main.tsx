@@ -5,8 +5,8 @@ import "./index.css";
 
 // Configure AWS Cognito OIDC settings
 const cognitoAuthConfig = {
-  authority: "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_GS8W608OW",
-  client_id: "168ob3mif0tdfs1055eokgadg4",
+  authority: "",
+  client_id: "",
   redirect_uri: `${window.location.origin}/callback`,
   response_type: "code",
   scope: "openid email profile aws.cognito.signin.user.admin",
