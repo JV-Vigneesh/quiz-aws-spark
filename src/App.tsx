@@ -25,7 +25,11 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/quiz" element={
+              <ProtectedRoute>
+                <Quiz />
+              </ProtectedRoute>
+            } />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
             <Route path="/callback" element={<Callback />} />

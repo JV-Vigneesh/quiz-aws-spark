@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { AWS_CONFIG } from "@/config/constants";
 import { LogIn, Shield, User } from "lucide-react";
 
 const Login = () => {
@@ -13,15 +14,15 @@ const Login = () => {
 
   useEffect(() => {
     if (auth.isAuthenticated) {
-      navigate("/");
+      const groups = (auth.user?.profile["cognito:groups"] as string[]) || [];
+      const isAdmin = groups.includes("Admins");
+      navigate(isAdmin ? "/admin" : "/user");
     }
-  }, [auth.isAuthenticated, navigate]);
+  }, [auth.isAuthenticated, auth.user, navigate]);
 
   const signOutRedirect = () => {
-    const clientId = ""; // Add your Cognito client ID
     const logoutUri = window.location.origin;
-    const cognitoDomain = ""; // Add your Cognito domain
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+    window.location.href = `${AWS_CONFIG.COGNITO.DOMAIN}/logout?client_id=${AWS_CONFIG.COGNITO.CLIENT_ID}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
   if (auth.isLoading) {
